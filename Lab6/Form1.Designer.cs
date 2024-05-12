@@ -61,6 +61,7 @@
             this.dataGridViewBook.Name = "dataGridViewBook";
             this.dataGridViewBook.Size = new System.Drawing.Size(477, 320);
             this.dataGridViewBook.TabIndex = 1;
+            this.dataGridViewBook.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewBook_DataError);
             // 
             // buttonFilter
             // 
@@ -91,6 +92,7 @@
             // 
             // comboBoxCondition
             // 
+            this.comboBoxCondition.Enabled = false;
             this.comboBoxCondition.FormattingEnabled = true;
             this.comboBoxCondition.Items.AddRange(new object[] {
             "AND",
