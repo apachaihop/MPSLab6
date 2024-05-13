@@ -56,7 +56,7 @@ namespace Lab6
                         System.Console.WriteLine("Файл уже существует и содержит нужную строку.");
                     }
                 }
-                dataAdapter = new OleDbDataAdapter("SELECT * FROM Dictionary1.txt", connection);
+                dataAdapter = new OleDbDataAdapter("SELECT id, name, author, date, price FROM Dictionary1.txt", connection);
                 dataTable = new DataTable();
                 dataAdapter.Fill(dataTable);
                 dataGridViewBook.DataSource = dataTable;
@@ -109,9 +109,17 @@ namespace Lab6
                                 string formattedDate = dateValue.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                                 commandText += "'" + formattedDate + "'";
                             }
+                            
                             else
                             {
-                                commandText += "'" + dataGridViewBook.Rows[i].Cells[j].Value + "'";
+                                if (dataGridViewBook.Columns[j].Name == "price")
+                                {
+                                    commandText += "'" + dataGridViewBook.Rows[i].Cells[j].Value.ToString().Replace(',', '.') + "'";
+                                }
+                                else
+                                {
+                                    commandText += "'" + dataGridViewBook.Rows[i].Cells[j].Value + "'";
+                                }
                             }
 
                             if (j < dataGridViewBook.ColumnCount - 1)
@@ -139,11 +147,6 @@ namespace Lab6
         }
 
 
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void FilterAndDisplayRows(List<Filter> filters)
         {
@@ -255,6 +258,46 @@ namespace Lab6
                 view.Rows[anError.RowIndex].Cells[anError.ColumnIndex].ErrorText = "an error";
 
                 anError.ThrowException = false;
+            }
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                string connectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=.;Extended Properties=text";
+                connection = new OleDbConnection(connectionString);
+                string filePath = "Dictionary1.txt";
+                string firstLine = "id,name,author,date,price";
+
+                if (!File.Exists(filePath))
+                {
+                    File.WriteAllText(filePath, firstLine);
+                }
+                else
+                {
+                    var lines = File.ReadAllLines(filePath);
+
+                    if (lines.Length == 0 || lines[0] != firstLine)
+                    {
+                        var newLines = new List<string> { firstLine };
+                        lines[0] = firstLine;
+                        File.WriteAllLines(filePath, newLines);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Файл уже существует и содержит нужную строку.");
+                    }
+                }
+                dataAdapter = new OleDbDataAdapter("SELECT id, name, author, date, price FROM Dictionary1.txt", connection);
+                dataTable = new DataTable();
+                dataAdapter.Fill(dataTable);
+                dataGridViewBook.DataSource = dataTable;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
